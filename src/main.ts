@@ -5,6 +5,7 @@ import Square from './geometry/Square';
 import ScreenQuad from './geometry/ScreenQuad';
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
+import LSystem from './lsystem/LSystem'
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 
@@ -47,6 +48,10 @@ function loadScene() {
   let colors: Float32Array = new Float32Array(colorsArray);
   square.setInstanceVBOs(offsets, colors);
   square.setNumInstances(n * n); // grid of "particles"
+
+  // initialize LSystem and a Turtle to draw
+  var lsys = new LSystem("F");
+  console.log(lsys.expandGrammar(5, lsys.grammar));
 }
 
 function main() {
