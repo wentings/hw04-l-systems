@@ -51,7 +51,9 @@ function loadScene() {
 
   // initialize LSystem and a Turtle to draw
   var lsys = new LSystem("F");
-  console.log(lsys.expandGrammar(5, lsys.grammar));
+  var x = lsys.expandGrammar(1, lsys.grammar);
+  console.log(x);
+  lsys.drawGrammar(x);
 }
 
 function main() {
