@@ -13,6 +13,7 @@ export default class LSystem {
     er: ExpansionRule = new ExpansionRule();
     grammar: string;
     transformHistory: mat4[] = [];
+    leafHistory: mat4[] = [];
     // tempTransform: mat4;
     // this.transformHistory.push(tempTransform);
 
@@ -79,6 +80,10 @@ export default class LSystem {
         if (str == "F") {
           let transMat : any = this.turtle.getMatrix();
           this.transformHistory.push(transMat);
+        }
+        if (str == "X") {
+          let transMat2 : any = this.turtle.getLeafMatrix();
+          this.leafHistory.push(transMat2);
         }
         if (str == "[") {
           this.pushState();

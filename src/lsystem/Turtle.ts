@@ -52,6 +52,11 @@ export default class Turtle {
     vec3.add(this.position, this.position, this.direction);
   }
 
+  // X
+  moveLeaf() {
+    console.log("move leaf");
+  }
+
   getMatrix() {
     // Translate
         let T: mat4 = mat4.create();
@@ -63,7 +68,26 @@ export default class Turtle {
 
         // Scale, based on depth
         let S: mat4 = mat4.create();
-        mat4.fromScaling(S, vec3.fromValues(0.8, 2.7, 0.8));
+        mat4.fromScaling(S, vec3.fromValues(0.8, 2.9, 0.8));
+
+        // Multiply together
+        let transformation: mat4 = mat4.create();
+        mat4.multiply(transformation, R, S);
+        return mat4.multiply(transformation, T, transformation);
+  }
+
+  getLeafMatrix() {
+    // Translate
+        let T: mat4 = mat4.create();
+        mat4.fromTranslation(T, this.position);
+
+        // Rotate
+        let R: mat4 = mat4.create();
+        mat4.fromQuat(R, this.quaternion);
+
+        // Scale, based on depth
+        let S: mat4 = mat4.create();
+        mat4.fromScaling(S, vec3.fromValues(1.0, 0.6, 1.0));
 
         // Multiply together
         let transformation: mat4 = mat4.create();
