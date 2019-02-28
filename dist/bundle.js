@@ -6090,11 +6090,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
     iterations: 0,
-    cactus_green: 0.0,
+    cactus_green: 1.0,
     starting_axiom: "F"
 };
 let iter = 0;
-let prevCacGreen = 0.0;
+let prevCacGreen = 1.0;
 let prevAxiom = "F";
 let square;
 let branch;
@@ -6156,7 +6156,7 @@ function loadScene(iterations, green, axi) {
         // push colors back
         let rand = Math.random();
         colorsArray.push(0.1);
-        colorsArray.push(rand * green * 0.8);
+        colorsArray.push(green * 0.6);
         colorsArray.push(0.1);
         colorsArray.push(1.0);
     }
@@ -6238,13 +6238,6 @@ function main() {
     Object(__WEBPACK_IMPORTED_MODULE_8__globals__["c" /* setGL */])(gl);
     // Initial call to load scene
     loadScene(iter, prevCacGreen, prevAxiom);
-    if (controls.iterations != iter || controls.cactus_green != prevCacGreen ||
-        controls.starting_axiom != prevAxiom) {
-        iter = controls.iterations;
-        prevCacGreen = controls.cactus_green;
-        prevAxiom = controls.starting_axiom;
-        loadScene(iter, prevCacGreen, prevAxiom);
-    }
     const camera = new __WEBPACK_IMPORTED_MODULE_6__Camera__["a" /* default */](__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].fromValues(0, 35, 70), __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].fromValues(0, 5, 0));
     const renderer = new __WEBPACK_IMPORTED_MODULE_5__rendering_gl_OpenGLRenderer__["a" /* default */](canvas);
     renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -6266,6 +6259,13 @@ function main() {
         instancedShader.setTime(time);
         flat.setTime(time++);
         gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+        if (controls.iterations != iter || controls.cactus_green != prevCacGreen ||
+            controls.starting_axiom != prevAxiom) {
+            iter = controls.iterations;
+            prevCacGreen = controls.cactus_green;
+            prevAxiom = controls.starting_axiom;
+            loadScene(iter, prevCacGreen, prevAxiom);
+        }
         renderer.clear();
         renderer.render(camera, flat, [screenQuad]);
         renderer.render(camera, instancedShader, [
