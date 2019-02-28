@@ -27,13 +27,13 @@ function loadScene() {
   screenQuad = new ScreenQuad();
   screenQuad.create();
 
-  let obj0: string = readTextFile('./src/wahoo.obj')
+  let obj0: string = readTextFile('./src/cyl_2.obj')
   branch = new Mesh(obj0, vec3.fromValues(0, 0, 0));
   branch.create();
 
   // initialize LSystem and a Turtle to draw
   var lsys = new LSystem("F");
-  var x = lsys.expandGrammar(1, lsys.grammar);
+  var x = lsys.expandGrammar(4, lsys.grammar);
   let transformations: mat4[] = lsys.transformHistory;
   console.log(x);
   lsys.drawGrammar(x);
@@ -46,7 +46,11 @@ function loadScene() {
   console.log("the length is " + lsys.transformHistory.length);
   for (let i = 0; i < transformations.length; i++) {
     let currTransform = transformations[i];
-
+    console.log("this is transform " + i);
+    console.log(currTransform[0] + " " + currTransform[4] + " " + currTransform[8] + " " + currTransform[12]);
+    console.log(currTransform[1] + " " + currTransform[5] + " " + currTransform[9] + " " + currTransform[13]);
+    console.log(currTransform[2] + " " + currTransform[6] + " " + currTransform[10] + " " + currTransform[14]);
+    console.log(currTransform[3] + " " + currTransform[7] + " " + currTransform[11] + " " + currTransform[15]);
     // Dummy - todo, get rid of offsets
     offsetsArray.push(0);
     offsetsArray.push(0);
@@ -74,9 +78,10 @@ function loadScene() {
     col4Array.push(currTransform[15]);
 
     // push colors back
-    colorsArray.push(1.0);
-    colorsArray.push(0.0);
-    colorsArray.push(0.0);
+    let rand: number = Math.random();
+    colorsArray.push(0.3);
+    colorsArray.push(rand * 0.58);
+    colorsArray.push(0.1);
     colorsArray.push(1.0);
   }
 
@@ -115,7 +120,7 @@ function main() {
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(10, 10, 10), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(0, 35, 70), vec3.fromValues(0, 5, 0));
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
   //gl.enable(gl.BLEND);

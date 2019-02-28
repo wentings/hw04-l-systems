@@ -1,6 +1,5 @@
 import {vec3, mat4, quat} from 'gl-matrix';
 
-var turtleHistory: Turtle[] = []; // Stack of turtle history
 
 export default class Turtle {
   position: vec3 = vec3.create();
@@ -17,23 +16,6 @@ export default class Turtle {
     this.position = vec3.fromValues(0, 0, 0);
     this.direction = vec3.fromValues(0, 1, 0);
     this.quaternion = quat.fromValues(0, 0, 1, 0);
-  }
-
-  // [
-  pushState() {
-    console.log("push state");
-    let temp: Turtle = new Turtle(this.position,
-                                  this.direction,
-                                  this.quaternion);
-    turtleHistory.push(temp);
-  }
-  // ]
-  popState(){
-    console.log("pop state");
-      var s = turtleHistory.pop();
-      this.position = s.position,
-      this.direction = s.direction;
-      this.quaternion = s.quaternion;
   }
 
   rotate(axis: vec3, degrees: number) {
@@ -71,11 +53,22 @@ export default class Turtle {
   }
 
   getMatrix() {
-    let transform: mat4 = mat4.create();
-    // translate by the origin * rotate by the degree * scale by the length
-    mat4.fromRotationTranslationScale(transform, this.quaternion, this.position,
-                                      vec3.fromValues(0.1, 1, 1));
-    return transform;
+    // Translate
+        let T: mat4 = mat4.create();
+        mat4.fromTranslation(T, this.position);
+
+        // Rotate
+        let R: mat4 = mat4.create();
+        mat4.fromQuat(R, this.quaternion);
+
+        // Scale, based on depth
+        let S: mat4 = mat4.create();
+        mat4.fromScaling(S, vec3.fromValues(0.8, 2.7, 0.8));
+
+        // Multiply together
+        let transformation: mat4 = mat4.create();
+        mat4.multiply(transformation, R, S);
+        return mat4.multiply(transformation, T, transformation);
   }
 
 }

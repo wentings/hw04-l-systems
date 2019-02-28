@@ -6,7 +6,8 @@ export default class DrawingRule {
                             vec3.fromValues(0, 1, 0),
                             quat.fromValues(0, 0, 0, 1));
     // Pass in a drawing function
-    constructor() {
+    constructor(turtle: Turtle) {
+      this.lsys = turtle;
     }
 
     draw(rand : number, currentChar : string) : any {
@@ -22,10 +23,6 @@ export default class DrawingRule {
 
       if (currentChar == "F") {
         return this.lsys.moveForward();
-      } else if (currentChar == "[") {
-        return this.lsys.pushState();
-      } else if (currentChar == "]") {
-        return this.lsys.popState();
       } else if (currentChar == "+") {
         return this.lsys.rotateLeft();
       } else if (currentChar == "-") {
