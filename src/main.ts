@@ -1,4 +1,4 @@
-import {vec3} from 'gl-matrix';
+import {vec3, mat4, quat} from 'gl-matrix';
 import * as Stats from 'stats-js';
 import * as DAT from 'dat-gui';
 import Square from './geometry/Square';
@@ -8,6 +8,8 @@ import Camera from './Camera';
 import LSystem from './lsystem/LSystem'
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
+import Mesh from './geometry/Mesh';
+import {readTextFile} from './globals';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -15,6 +17,7 @@ const controls = {
 };
 
 let square: Square;
+let branch: Mesh;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
 
@@ -24,36 +27,67 @@ function loadScene() {
   screenQuad = new ScreenQuad();
   screenQuad.create();
 
-  // Set up instanced rendering data arrays here.
-  // This example creates a set of positional
-  // offsets and gradiated colors for a 100x100 grid
-  // of squares, even though the VBO data for just
-  // one square is actually passed to the GPU
-  let offsetsArray = [];
-  let colorsArray = [];
-  let n: number = 100.0;
-  for(let i = 0; i < n; i++) {
-    for(let j = 0; j < n; j++) {
-      offsetsArray.push(i);
-      offsetsArray.push(j);
-      offsetsArray.push(0);
-
-      colorsArray.push(i / n);
-      colorsArray.push(j / n);
-      colorsArray.push(1.0);
-      colorsArray.push(1.0); // Alpha channel
-    }
-  }
-  let offsets: Float32Array = new Float32Array(offsetsArray);
-  let colors: Float32Array = new Float32Array(colorsArray);
-  square.setInstanceVBOs(offsets, colors);
-  square.setNumInstances(n * n); // grid of "particles"
+  let obj0: string = readTextFile('./src/wahoo.obj')
+  branch = new Mesh(obj0, vec3.fromValues(0, 0, 0));
+  branch.create();
 
   // initialize LSystem and a Turtle to draw
   var lsys = new LSystem("F");
-  var x = lsys.expandGrammar(1, lsys.grammar);
+  var x = lsys.expandGrammar(0, lsys.grammar);
+  let transformations: mat4[] = lsys.transformHistory;
   console.log(x);
   lsys.drawGrammar(x);
+  let offsetsArray = [];
+  let colorsArray = [];
+  let col1Array = [];
+  let col2Array = [];
+  let col3Array = [];
+  let col4Array = [];
+
+  for (let i = 0; i < transformations.length; i++) {
+    let currTransform = transformations[i];
+
+    // Dummy - todo, get rid of offsets
+    offsetsArray.push(0);
+    offsetsArray.push(0);
+    offsetsArray.push(0);
+
+    // push column vectors back
+    col1Array.push(currTransform[0]);
+    col1Array.push(currTransform[1]);
+    col1Array.push(currTransform[2]);
+    col1Array.push(currTransform[3]);
+
+    col2Array.push(currTransform[4]);
+    col2Array.push(currTransform[5]);
+    col2Array.push(currTransform[6]);
+    col2Array.push(currTransform[7]);
+
+    col3Array.push(currTransform[8]);
+    col3Array.push(currTransform[9]);
+    col3Array.push(currTransform[10]);
+    col3Array.push(currTransform[11]);
+
+    col4Array.push(currTransform[12]);
+    col4Array.push(currTransform[13]);
+    col4Array.push(currTransform[14]);
+    col4Array.push(currTransform[15]);
+
+    // push colors back
+    colorsArray.push(1.0);
+    colorsArray.push(0.0);
+    colorsArray.push(0.0);
+    colorsArray.push(1.0);
+  }
+
+  let col1: Float32Array = new Float32Array(col1Array);
+  let col2: Float32Array = new Float32Array(col2Array);
+  let col3: Float32Array = new Float32Array(col3Array);
+  let col4: Float32Array = new Float32Array(col4Array);
+  let colors: Float32Array = new Float32Array(colorsArray);
+  let offset: Float32Array = new Float32Array(offsetsArray);
+  branch.setInstanceVBOs(offset, colors, col1, col2, col3, col4);
+  branch.setNumInstances(transformations.length); // grid of "particles"
 }
 
 function main() {
@@ -81,12 +115,12 @@ function main() {
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(50, 50, 10), vec3.fromValues(50, 50, 0));
-
+  const camera = new Camera(vec3.fromValues(10, 10, 10), vec3.fromValues(0, 0, 0));
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
+  //gl.enable(gl.BLEND);
+  //gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
+  gl.enable(gl.DEPTH_TEST)
 
   const instancedShader = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/instanced-vert.glsl')),
@@ -108,7 +142,7 @@ function main() {
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      square,
+      branch,
     ]);
     stats.end();
 

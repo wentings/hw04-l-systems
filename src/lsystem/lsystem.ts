@@ -29,7 +29,7 @@ export default class LSystem {
 
     // Iterate over each char in the axiom and replace it with its expansion
     expandGrammar(iterations: number, str: string) : string {
-        var output = "";
+        var output = this.grammar;
         for (let i = 0; i < iterations; i++) {
           for (var j = 0; j < str.length; j++) {
             output = output.concat(this.expandGrammarSingle(str.charAt(j)));
