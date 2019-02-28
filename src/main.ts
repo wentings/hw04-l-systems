@@ -33,7 +33,7 @@ function loadScene() {
 
   // initialize LSystem and a Turtle to draw
   var lsys = new LSystem("F");
-  var x = lsys.expandGrammar(0, lsys.grammar);
+  var x = lsys.expandGrammar(1, lsys.grammar);
   let transformations: mat4[] = lsys.transformHistory;
   console.log(x);
   lsys.drawGrammar(x);
@@ -43,7 +43,7 @@ function loadScene() {
   let col2Array = [];
   let col3Array = [];
   let col4Array = [];
-
+  console.log("the length is " + lsys.transformHistory.length);
   for (let i = 0; i < transformations.length; i++) {
     let currTransform = transformations[i];
 
@@ -142,7 +142,7 @@ function main() {
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      branch,
+      branch
     ]);
     stats.end();
 

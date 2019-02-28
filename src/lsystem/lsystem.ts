@@ -42,13 +42,14 @@ export default class LSystem {
         // Use the expansion rules
         let rand: number = Math.random();
         var result = "";
+        if (str == "F") {
+          console.log("ayy");
+          let transMat : any = this.turtle.getMatrix();
+          this.transformHistory.push(transMat);
+        }
         let func = this.dr.draw(rand, str);
         if (func) {
           func();
-          if (str == "F") {
-            let transMat : any = this.turtle.getMatrix();
-            this.transformHistory.push(transMat);
-          }
         }
     }
 

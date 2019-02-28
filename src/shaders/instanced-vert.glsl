@@ -19,12 +19,17 @@ in vec4 vs_Transform4;
 
 out vec4 fs_Col;
 out vec4 fs_Pos;
+out vec4 fs_Nor;
+out vec4 fs_LightVec;
+
+const vec4 lightPos = vec4(10, 10, 3, 1);
 
 void main()
 {
     fs_Col = vs_Col;
     fs_Pos = vs_Pos;
-
+    fs_Nor = vs_Nor;
+    
     mat4 transformation = mat4(vs_Transform1, vs_Transform2, vs_Transform3,
       vs_Transform4);
 
@@ -33,6 +38,6 @@ void main()
     //
     // vec3 billboardPos = offset + vs_Pos.x * u_CameraAxes[0] + vs_Pos.y * u_CameraAxes[1];
     vec4 transformedPos = transformation * vs_Pos;
-
+    fs_LightVec = lightPos - transformedPos;
     gl_Position = u_ViewProj * transformedPos;
 }

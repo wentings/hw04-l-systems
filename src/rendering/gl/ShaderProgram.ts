@@ -164,7 +164,6 @@ class ShaderProgram {
     }
 
     // transform stuff
-    // ------------------- TRANSFORMATION INFORMATION --------------------------
    if (this.attrTransform1 != -1 && d.bindTransform1()) {
      gl.enableVertexAttribArray(this.attrTransform1);
      gl.vertexAttribPointer(this.attrTransform1, 4, gl.FLOAT, false, 0, 0);
