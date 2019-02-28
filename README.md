@@ -19,7 +19,7 @@ I have gotten a lot of help from the TAs and Adam on how to set up the l-system,
 ## Inspiration
 Once I started playing with the l-system, I really liked the shape of the cactus. Here is reference image that I used. 
 
-![](inspo.png) 
+![](inspo.jpg) 
 
 ## Implementation
 
